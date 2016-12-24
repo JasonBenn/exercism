@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 CFLAGS  = -std=c99
 CFLAGS += -Wall
 CFLAGS += -Wextra
