@@ -4,6 +4,7 @@
 #define MAX_STR_LEN 20
 
 struct Vector {
+    // pointer to array[20] of chars
    char (*vec)[MAX_STR_LEN];
    int size;
 };
