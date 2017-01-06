@@ -12,6 +12,7 @@ void xor_chars(char *word, int *xord) {
 }
 
 bool is_anagram(char *a, char *b) {
+    printf("is_anagram: %s, %s\n", a, b);
     return true;
 }
 
@@ -36,7 +37,12 @@ struct Vector anagrams_for(char *word, struct Vector vec) {
     for (int i = 0; i < vec.size; i++) {
         if (is_anagram(vec.vec[i], word)) {
             matching_words_length++;
-            *(matching_words + matching_words_length) = vec.vec[i];
+            printf("this should be garbage, right? %s\n", *(matching_words + matching_words_length));
+            printf("this should be a pointer? but it's prob a char. c: %c\n", **(matching_words +
+                    matching_words_length));
+            printf("this should be a pointer? but it's prob a char. i: %i\n", **(matching_words +
+                    matching_words_length));
+//            **(matching_words + matching_words_length) = vec.vec[i];
         } else {
             matching_words++;
         }
