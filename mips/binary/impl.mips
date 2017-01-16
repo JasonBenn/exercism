@@ -1,0 +1,17 @@
+binary_convert:
+addu $v0, $zero, $zero # move a0 to v0, so we can manipulate it and eventually return it
+
+loop_start:
+# check if null char
+lb $t0, 0($a0) # load value from pointer into t1. now it'll be 60 or 61 or null char (0)
+beq $t0, $zero, exit
+
+sll $v0, $v0, 1 # left shift once
+sub $t1, $t0, 48 # char - 60, that'll be either 0 or 1
+add $v0, $v0, $t1 # add that to v0
+
+addiu $a0, $a0, 1 # add a byte to a0
+j loop_start # restart the loop!
+
+exit:
+jr $ra

@@ -1,0 +1,25 @@
+is_leap_year:
+addiu $t1, $zero, 400 # get ready to divide by 400
+div $a0, $t1 # div 1st arg by 400
+mfhi $t1 # put remainder into t1
+beq $t1, $zero, success # check if modulo was 0, and return 1 if so
+
+addiu $t1, $zero, 100
+div $a0, $t1
+mfhi $t1
+beq $t1, $zero, fail
+
+addiu $t1, $zero, 4
+div $a0, $t1
+mfhi $t1
+beq $t1, $zero, success
+
+fail:
+addu $v0, $zero, $zero
+jr $ra
+
+success: 
+addiu $v0, $zero, 1
+jr $ra
+
+end:
