@@ -1,90 +1,103 @@
 #include <stdio.h>
-#include <stdbool.h>
-#include "./anagram.h"
+#include <stdlib.h>
+#include <string.h>
+#include "anagram.h"
+#define MAX_STR_LEN 20
 
-// pointer version
-void xor_chars(char *word, int *xord) {
+enum { TRUE, FALSE };
+
+int *countLetters(char *word) {
+    int *ptr;
+    ptr = malloc(sizeof(int) * 26);
+
     int i = 0;
-    while (word[i++] != '\0') {
-        *xord ^= word[i];
-//        printf("%i\n", *xord);
+    int lettersCount = 26;
+
+    while (lettersCount--) {
+        ptr[lettersCount] = 0;
+    }
+
+    while (word[i] != '\0') {
+        ptr[word[i] - 'a'] += 1;
+        i++;
+    }
+    return ptr;
+}
+
+void printLetterCount(int *letterCount) {
+    int i = 0;
+    while (i < 26) {
+        if (letterCount[i] != 0) {
+            printf("%c: %i\n", (char) i + 'a', letterCount[i]);
+        }
+        i++;
     }
 }
 
-bool is_anagram(char *a, char *b) {
-    printf("is_anagram: %s, %s\n", a, b);
-    return true;
+int compareLetterCounts(int *a, int *b) {
+    int i = 0;
+    while (i++ < 26) {
+        printf("comparing: %c to %c. %i\n", a[i] + 'a', b[i] + 'a', a[i] == b[i]);
+        if (a[i] != b[i])
+            return FALSE;
+    }
+    return TRUE;
 }
 
-// invoked like so:
-//int xord = 0;
-//xor_chars("xoa", &xord);
-//printf("xord: %i\n", xord);
+#define MAX_INPUTS_LENGTH 5
 
-struct Vector anagrams_for(char *word, struct Vector vec) {
-    int xord = 0;
-    xor_chars(word, &xord);
 
-    char (*matching_words)[20] = &vec.vec[0];
-    // should be pointer to array[20] of chars
-    // matching_words++ should be next matching word in vec.
-    // start with first array of chars. if matches, matching_words++ = pointer to next word. if doesn't,
-    // matching_words++. This means that the pointer will start at the first match, and pointers will be created for
-    // subsequent matches. Right?
-    int matching_words_length = 0;
-    printf("matching_words: %s\n", *matching_words);
+struct Vector anagrams_for(char *word, struct Vector inputs) {
+    int *wordLetterCounts = countLetters(word);
+    char matchingWords[5][MAX_STR_LEN];
+    struct Vector outputs = { matchingWords, 0 };
 
-    for (int i = 0; i < vec.size; i++) {
-        if (is_anagram(vec.vec[i], word)) {
-            matching_words_length++;
-            printf("this should be garbage, right? %s\n", *(matching_words + matching_words_length));
-            printf("this should be a pointer? but it's prob a char. c: %c\n", **(matching_words +
-                    matching_words_length));
-            printf("this should be a pointer? but it's prob a char. i: %i\n", **(matching_words +
-                    matching_words_length));
-//            **(matching_words + matching_words_length) = vec.vec[i];
-        } else {
-            matching_words++;
+    for (int i = 0; i < inputs.size; i++) {
+        if (compareLetterCounts(wordLetterCounts, countLetters(inputs.vec[i]))) {
+            printf("%i", outputs.size);
+//            outputs[outputs.size++] = inputs.vec[i];
         }
     }
-
-//    for (int i = 0; i < vec.size; i++) {
-//        printf("in loop! i: %i, vec.vec[i]: %s\n", i, &vec.vec[i][0]);
-//        int xord_word = 0;
-//        xor_chars(&vec.vec[i][0], &xord_word);
-//        printf("xord_word: %i, word: %i\n", xord_word, xord);
-//        if (xord_word == xord) {
-//            printf("xord_word: %i, xord: %i\n", xord_word, xord);
-//            strcpy(matching_words[i], vec.vec[i]);
-//            printf("matching_words[i]: %s\n", matching_words[i]);
-//            matching_words_length++;
-//        }
-//    }
-
-    // matching_words is a array of pointers. inner pointers are to chars.
-    // how do i declare an array of strings again?
-    // char matching_words[vec.size][MAX_STR_LEN]?
-    // char *matching_words[vec.size][MAX_STR_LEN]?
-
-    // matching words[i]
-    struct Vector matching_words_vector = { matching_words, matching_words_length };
-    return matching_words_vector;
+    return outputs;
 }
 
 int main(void) {
-    int xord = 0;
-    xor_chars("xoa", &xord);
-//    printf("xord: %i\n", xord);
-    xor_chars("xoa", &xord);
-//    printf("xord: %i\n", xord);
-    char words[][MAX_STR_LEN] = {
-        "banana", "boa", "sup", "oab"
-    };
-    struct Vector vec = {
-        words,
-        4
-    };
-    struct Vector result = anagrams_for("oab", vec);
-    printf("result.vec.size: %i, result.vec[0]: %s\n", result.size, result.vec[0]);
 
+//    int x;
+    char inputs[][MAX_STR_LEN] = {
+            "tan",
+            "stand",
+            "at"
+    };
+
+//    char outputs[][MAX_STR_LEN] = {
+//            "tan"
+//    };
+//    int outputs_len = sizeof(outputs) / MAX_STR_LEN;
+
+    struct Vector vin = {
+            inputs,
+            sizeof(inputs) / MAX_STR_LEN
+    };
+
+    anagrams_for("ant", vin);
+
+//    char *wordA = "ahhhhhhaahello";
+//    char *wordB = "ahhhhhhaahlello";
+//    int *letterCount = countLetters(wordA);
+
+//    printLetterCount(letterCount);
+    // How do I allocate memory for a struct containing an array of pointers to chars (strings)? I guess I have to
+    // enforce a max length, don't I.
+    // Is it char vec[5][20]?
+
+    // I want to create a struct that maps characters to the count of characters. How do I dynamically add characters
+    // and their counts to a list? Would I need to implement a search through a list to find a char, and add only if
+    // the char was never found?
+
+    // my goal is to create a mapping from char to count as I encounter chars. Then, by comparing these counts, I'll
+    // know if they're anagrams of each other.
+    // CharToCount
+
+//    printf("first vec: %s, size: %i", outputs->vec[0], outputs->size);
 }
